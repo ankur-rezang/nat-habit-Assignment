@@ -43,7 +43,3 @@ EXPOSE 8000
 # Set the entrypoint and default command to run Django server
 ENTRYPOINT ["python3"]
 CMD ["manage.py", "runserver", "0.0.0.0:8000"]
-
-# Set the entrypoint and default command to run Django server
-ENTRYPOINT ["python3"]
-CMD ["manage.py", "runserver", "0.0.0.0:8000"]
