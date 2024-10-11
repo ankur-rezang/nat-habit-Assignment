@@ -1,45 +1,36 @@
-
-# version: 0.2
-
-# phases:
-#   install:
-#     runtime-versions:
-#       python: 3.8
-#     commands:
-#       - echo Installing dependencies...
-#       - pip install -r requirements.txt
-  
-#   pre_build:
-#     commands:
-#       - echo Running database migrations...
-#       - python manage.py migrate
-
-#   build:
-#     commands:
-#       - echo Build started on `date`
-#       - echo Building the Docker image...
-#       - docker build -t my-django-app .
-
-#   post_build:
-#     commands:
-#       - echo Build completed on `date`
-#       - echo Pushing the Docker image to ECR...
-#       - $(aws ecr get-login --no-include-email --region us-east-1)  # Modify region as needed
-#       - docker tag my-django-app:latest <your-account-id>.dkr.ecr.<region>.amazonaws.com/my-django-app:latest
-#       - docker push <your-account-id>.dkr.ecr.<region>.amazonaws.com/my-django-app:latest
 version: 0.2
 
 phases:
+  install:
+    commands:
+      - echo "Installing dependencies..."
+      - pip install --upgrade pip
+      - pip install -r requirements.txt
+
   pre_build:
     commands:
       - echo "Logging in to Amazon ECR..."
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-  build:
-    commands:
       - echo "Building the Docker image..."
       - docker build -t $ECR_REPOSITORY .
       - docker tag $ECR_REPOSITORY:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY:latest
-  post_build:
+
+  build:
     commands:
       - echo "Pushing the Docker image to ECR..."
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+
+  post_build:
+    commands:
+      - echo "Docker image pushed successfully."
+      - echo "Starting deployment phase..."
+
+artifacts:
+  files:
+    - appspec.yml
+    - taskdef.json  # If using ECS
+    - scripts/**    # Any deployment scripts
+
+cache:
+  paths:
+    - '/root/.cache/pip/**/*'
