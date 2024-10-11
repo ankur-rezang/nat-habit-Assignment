@@ -16,13 +16,15 @@
 
 
 
+
 FROM ubuntu:22.04
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the entire project directory to /app
-COPY . /app
+# Copy the requirements and application files to the working directory
+COPY requirements.txt /app
+COPY devops /app
 
 # Install Python, pip, and other necessary tools
 RUN apt-get update && \
