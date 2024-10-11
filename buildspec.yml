@@ -65,13 +65,7 @@ phases:
     commands:
       - echo "Docker image pushed successfully."
       - echo "Starting deployment phase..."
-
-artifacts:
-  files:
-    - appspec.yml
-    - taskdef.json  # If using ECS
-    - scripts/**    # Any deployment scripts
-
+      
 cache:
   paths:
     - '/root/.cache/pip/**/*'
